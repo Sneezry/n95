@@ -1,5 +1,5 @@
 {
-  "datetime": 1579736503306,
+  "datetime": 1579737096133,
   "results": [
     {
       "url": "https://i-item.jd.com/100001526784.html",
@@ -388,8 +388,8 @@
     {
       "url": "https://item.jd.com/100005472170.html",
       "imgSrc": "https://m.360buyimg.com/mobilecms/s750x750_jfs/t1/84585/40/147/40702/5cd3becdE05c6a5ab/6ed3b4369f3cdc42.jpg!q80.dpg.webp",
-      "soldout": true,
-      "takeoff": false,
+      "soldout": "",
+      "takeoff": "",
       "price": "¥220.00",
       "name": "3M 8511N95带阀防护口罩冷流呼吸/[1盒]"
     },
