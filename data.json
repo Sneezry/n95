@@ -1,11 +1,11 @@
 {
-  "datetime": 1579715498764,
+  "datetime": 1579716103810,
   "results": [
     {
       "url": "https://i-item.jd.com/100001526784.html",
       "imgSrc": "https://m.360buyimg.com/mobilecms/s750x750_jfs/t1/84075/27/1873/177083/5d032b8eEf16d06eb/01f3f379e8496caf.jpg!q80.dpg",
-      "soldout": true,
-      "takeoff": false,
+      "soldout": "",
+      "takeoff": "",
       "price": "¥4.00",
       "name": "一护9393 口罩6002 耳戴式KN95颗粒物防护雾霾口罩男女折叠式（6002独立包装 标准款）"
     },
@@ -51,11 +51,11 @@
     },
     {
       "url": "https://item.jd.com/100002690346.html",
-      "imgSrc": "https://m.360buyimg.com/mobilecms/s750x750_jfs/t1/18063/29/3457/510801/5c272efeE36d9abd9/b13571d79ea1372d.jpg!q80.dpg.webp",
+      "imgSrc": null,
       "soldout": true,
       "takeoff": false,
-      "price": "¥125.00",
-      "name": "3M 口罩 KN95 头戴折叠式9502VT 带阀颗粒物防护口罩 独立包装 25只/盒"
+      "price": null,
+      "name": null
     },
     {
       "url": "https://item.jd.com/100006992516.html",
