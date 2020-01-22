@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>N95</title>
+    <style>
+        body {
+            font-family: 微软雅黑;
+            user-select: none;
+        }
+
+        a {
+            text-decoration: none;
+            margin: 20px;
+            display: inline-block;
+            position: relative;
+            padding: 10px;
+        }
+
+        a:hover {
+            box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.35);
+        }
+
+        a[data-soldout]::before,
+        a[data-takeoff]::before {
+            color: white;
+            background: rgba(0, 0, 0, 0.5);
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin-left: -80px;
+            margin-top: -80px;
+            display: block;
+            z-index: 100;
+            line-height: 160px;
+            text-align: center;
+            font-size: 42px;
+        }
+
+        a[data-soldout]::before {
+            content: "无货";
+        }
+
+        a[data-takeoff]::before {
+            content: "下架";
+        }
+
+        img {
+            width: 320px;
+            height: 320px;
+        }
+
+        a[data-soldout] img,
+        a[data-takeoff] img {
+            filter: blur(2px);
+        }
+
+        .price {
+            height: 20px;
+            line-height: 20px;
+            margin-top: -20px;
+            color: #f2270c;
+            z-index: 200;
+            position: relative;
+        }
+
+        .name {
+            position: absolute;
+            color: black;
+            font-size: 12px;
+            bottom: 10px;
+            left: 0;
+            background: rgba(255, 255, 255, 0.75);
+            padding: 0 10px 20px 10px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+<script>
+async function run() {
+    const rq = new Request('data.json');
+    const res = await fetch(rq);
+    const data = await res.json();
+    document.body.innerHTML = `<div><h2>最后更新时间：${new Date(data.datetime).toLocaleString()}</h2></div>`;
+    for (const result of data.results) {
+        const a = document.createElement('a');
+        a.href = result.url;
+        a.target = '_blank';
+        if (result.soldout) {
+            a.setAttribute('data-soldout', true);
+        } else if (result.takeoff) {
+            a.setAttribute('data-takeoff', true);
+        }
+        const img = document.createElement('img');
+        img.src = result.imgSrc;
+        const price = document.createElement('div');
+        price.className = 'price';
+        price.innerText = result.price || '未知价格';
+        const itemName = document.createElement('div');
+        itemName.className = 'name';
+        itemName.innerText = result.name || '';
+        a.appendChild(img);
+        a.appendChild(price);
+        a.appendChild(itemName);
+        document.body.appendChild(a);
+    }
+}
+
+run();
+</script>
+</body>
+</html>
