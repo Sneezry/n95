@@ -1,5 +1,5 @@
 {
-  "datetime": 1579749533446,
+  "datetime": 1579765426274,
   "results": [
     {
       "url": "https://i-item.jd.com/100001526784.html",
@@ -236,8 +236,8 @@
     {
       "url": "https://item.jd.com/100001088162.html",
       "imgSrc": "https://m.360buyimg.com/mobilecms/s750x750_jfs/t1/86659/36/484/157290/5dae6703E0626978c/29703d7231edef80.jpg!q80.dpg.webp",
-      "soldout": true,
-      "takeoff": false,
+      "soldout": "",
+      "takeoff": "",
       "price": "¥180.00",
       "name": "代尔塔（Deltaplus）104011 防尘口罩N95防有机气体/防装修异味/雾霾/粉尘定做头戴式 60只/盒"
     },
