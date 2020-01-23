@@ -1,5 +1,5 @@
 {
-  "datetime": 1579744306404,
+  "datetime": 1579744912445,
   "results": [
     {
       "url": "https://i-item.jd.com/100001526784.html",
@@ -12,8 +12,8 @@
     {
       "url": "https://i-item.jd.com/100001526786.html",
       "imgSrc": "https://m.360buyimg.com/mobilecms/s750x750_jfs/t1/84075/27/1873/177083/5d032b8eEf16d06eb/01f3f379e8496caf.jpg!q80.dpg.webp",
-      "soldout": "",
-      "takeoff": "",
+      "soldout": true,
+      "takeoff": false,
       "price": "¥115.00",
       "name": "一护93932 口罩6002 耳戴式KN95颗粒物防护雾霾口罩男女折叠式（6002整盒30只装）"
     },
