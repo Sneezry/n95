@@ -1,11 +1,11 @@
 {
-  "datetime": 1579738310726,
+  "datetime": 1579738908941,
   "results": [
     {
       "url": "https://i-item.jd.com/100001526784.html",
       "imgSrc": "https://m.360buyimg.com/mobilecms/s750x750_jfs/t1/84075/27/1873/177083/5d032b8eEf16d06eb/01f3f379e8496caf.jpg!q80.dpg",
-      "soldout": "",
-      "takeoff": "",
+      "soldout": true,
+      "takeoff": false,
       "price": "¥4.00",
       "name": "一护9393 口罩6002 耳戴式KN95颗粒物防护雾霾口罩男女折叠式（6002独立包装 标准款）"
     },
@@ -388,8 +388,8 @@
     {
       "url": "https://item.jd.com/100005472170.html",
       "imgSrc": "https://m.360buyimg.com/mobilecms/s750x750_jfs/t1/84585/40/147/40702/5cd3becdE05c6a5ab/6ed3b4369f3cdc42.jpg!q80.dpg.webp",
-      "soldout": "",
-      "takeoff": "",
+      "soldout": true,
+      "takeoff": false,
       "price": "¥220.00",
       "name": "3M 8511N95带阀防护口罩冷流呼吸/[1盒]"
     },
