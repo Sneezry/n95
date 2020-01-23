@@ -3,6 +3,7 @@ const devices = require('puppeteer/DeviceDescriptors');
 const fs = require('fs');
 
 var browser;
+var MAX_CONNECTIONS = 10;
 
 async function init() {
     console.log('Setup browser...');
@@ -17,10 +18,11 @@ async function dispose() {
     }
 }
 
-async function capture(url) {
+async function fetchInfo(url) {
     console.log('Fetch ' + url + '...');
     const page = await browser.newPage();
-    await page.emulate(devices['iPhone 5'])
+    await page.emulate(devices['iPhone 5']);
+    await page.setExtraHTTPHeaders({Accept: 'text/html,application/xhtml+xml,application/xml;q=0.8'});
     await page.goto(url);
     const statusNote = await page.$('#statusNote');
     const status = statusNote ? await statusNote.evaluate(node => node.innerText) : null;
@@ -34,7 +36,8 @@ async function capture(url) {
     const itemName = await page.$('#itemName');
     const name = itemName ? await itemName.evaluate(node => node.innerText) : null;
     await page.close();
-    return {imgSrc, soldout, takeoff, price, name};
+    console.log('Fetched ' + url);
+    return {url, imgSrc, soldout, takeoff, price, name};
 }
 
 async function getUrls() {
@@ -48,18 +51,28 @@ async function getUrls() {
 async function run() {
     const urls = await getUrls();
     console.log('Found ' + urls.length + ' URL(s).');
-    const results = [];
     const data = {
         datetime: Date.now(),
-        results,
+        results: []
     }
     await init();
     let index = 0;
-    for (const url of urls) {
-        console.log((++index) +'/' + urls.length);
-        const info = await capture(url);
-        results.push(Object.assign({url}, info));
+    const urlTotal = urls.length;
+
+    while(urls.length) {
+        let fetchPromise = [];
+        for (let i = 0; i < MAX_CONNECTIONS; i++) {
+            if (!urls.length) {
+                break;
+            }
+            console.log((++index) +'/' + urlTotal);
+            const url = urls.shift();
+            fetchPromise.push(fetchInfo(url));
+        }
+        const infoChunk = await Promise.all(fetchPromise);
+        data.results = data.results.concat(infoChunk);
     }
+
     await dispose();
     fs.writeFileSync('data.json', JSON.stringify(data, null, 2));
 }
