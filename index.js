@@ -14,7 +14,7 @@ async function sleep(t) {
 
 async function init() {
     console.log('Setup browser...');
-    browser = browser || await puppeteer.launch({headless: false, args: ['--no-sandbox', '--disable-setuid-sandbox']});
+    browser = browser || await puppeteer.launch({headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox']});
 }
 
 async function dispose() {
