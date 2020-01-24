@@ -80,6 +80,11 @@
             width: 100%;
             box-sizing: border-box;
         }
+
+        [data-available-only] a[data-soldout],
+        [data-available-only] a[data-takeoff] {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -88,7 +93,7 @@ async function run() {
     const rq = new Request('data.json');
     const res = await fetch(rq);
     const data = await res.json();
-    document.body.innerHTML = `<div><h2>最后更新时间：${new Date(data.datetime).toLocaleString()}</h2></div>`;
+    document.body.innerHTML += `<div><h2>最后更新时间：${new Date(data.datetime).toLocaleString()}</h2><input type="checkbox" id="showAvailableOnly"><label for="showAvailableOnly">仅显示有货</label></div>`;
     for (const result of data.results) {
         const a = document.createElement('a');
         a.href = result.url;
@@ -110,6 +115,15 @@ async function run() {
         a.appendChild(price);
         a.appendChild(itemName);
         document.body.appendChild(a);
+    }
+
+    
+    document.getElementById('showAvailableOnly').onchange = function() {
+        if (this.checked) {
+            document.body.setAttribute('data-available-only', true);
+        } else {
+            document.body.removeAttribute('data-available-only');
+        }
     }
 }
 

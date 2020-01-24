@@ -4,10 +4,11 @@ const fs = require('fs');
 
 var browser;
 var MAX_CONNECTIONS = 10;
+var CURRENT_CONNECTIONS = 0;
 
 async function init() {
     console.log('Setup browser...');
-    browser = browser || await puppeteer.launch();
+    browser = browser || await puppeteer.launch({headless: false});
 }
 
 async function dispose() {
@@ -19,14 +20,25 @@ async function dispose() {
 }
 
 async function fetchInfo(url) {
-    console.log('Fetch ' + url + '...');
     const page = await browser.newPage();
     await page.emulate(devices['iPhone 5']);
     await page.setExtraHTTPHeaders({Accept: 'text/html,application/xhtml+xml,application/xml;q=0.8'});
-    await page.goto(url);
+    await page.goto(url, {waitUntil: 'load', timeout: 0});
+    let info;
+    if (/jd\.com/.test(url)) {
+        info = await getJDInfo(url, page);
+    } else if (/suning\.com/.test(url)) {
+        info = await getSuningInfo(url, page);
+    }
+    await page.close();
+    console.log('Fetched ' + url);
+    return info;
+}
+
+async function getJDInfo(url, page) {
     const statusNote = await page.$('#statusNote');
     const status = statusNote ? await statusNote.evaluate(node => node.innerText) : null;
-    await statusNote.dispose();
+    statusNote && await statusNote.dispose();
     const soldout = status && /无货/.test(status);
     const takeoff = status && /下架/.test(status);
     const firstImage = await page.$('#firstImg');
@@ -35,8 +47,21 @@ async function fetchInfo(url) {
     const price = priceSale ? await priceSale.evaluate(node => node.innerText) : null;
     const itemName = await page.$('#itemName');
     const name = itemName ? await itemName.evaluate(node => node.innerText) : null;
-    await page.close();
-    console.log('Fetched ' + url);
+    return {url, imgSrc, soldout, takeoff, price, name};
+}
+
+async function getSuningInfo(url, page) {
+    const statusNote = await page.$('#noGoodsP');
+    const status = statusNote ? await statusNote.evaluate(node => node.innerText) : null;
+    statusNote && await statusNote.dispose();
+    const soldout = status && /无货/.test(status);
+    const takeoff = status && /下架/.test(status);
+    const firstImage = await page.$('.pic-item img');
+    const imgSrc = firstImage ? 'https:' + (await firstImage.evaluate(node => node.getAttribute('ori-src'))) : null;
+    const priceSale = await page.$('#nopgPriceSymbol');
+    const price = priceSale ? await priceSale.evaluate(node => node.innerText) : null;
+    const itemName = await page.$('#productName');
+    const name = itemName ? await itemName.evaluate(node => node.innerText) : null;
     return {url, imgSrc, soldout, takeoff, price, name};
 }
 
@@ -56,25 +81,37 @@ async function run() {
         results: []
     }
     await init();
-    let index = 0;
     const urlTotal = urls.length;
 
-    while(urls.length) {
-        let fetchPromise = [];
-        for (let i = 0; i < MAX_CONNECTIONS; i++) {
-            if (!urls.length) {
-                break;
-            }
-            console.log((++index) +'/' + urlTotal);
-            const url = urls.shift();
-            fetchPromise.push(fetchInfo(url));
-        }
-        const infoChunk = await Promise.all(fetchPromise);
-        data.results = data.results.concat(infoChunk);
-    }
+    startToFetch(urlTotal, urls, data);
+}
 
-    await dispose();
-    fs.writeFileSync('data.json', JSON.stringify(data, null, 2));
+async function startToFetch(urlTotal, urls, data) {
+    if (CURRENT_CONNECTIONS >= MAX_CONNECTIONS || !urls.length) {
+        return;
+    }
+    const url = urls.shift();
+    CURRENT_CONNECTIONS++;
+    console.log((urlTotal - urls.length) +'/' + urlTotal + ' - Start to fetch ' + url + '...');
+
+    if (CURRENT_CONNECTIONS < MAX_CONNECTIONS) {
+        startToFetch(urlTotal, urls, data);
+    }
+    
+    fetchInfo(url).then(async info => {
+        if (info) {
+            data.results.push(info);
+        }
+        
+        CURRENT_CONNECTIONS--;
+
+        if (urls.length === 0 && !CURRENT_CONNECTIONS) {
+            fs.writeFileSync('data.json', JSON.stringify(data, null, 2));
+            await dispose();
+        } else {
+            startToFetch(urlTotal, urls, data);
+        }
+    });
 }
 
 run();
