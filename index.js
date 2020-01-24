@@ -1,14 +1,14 @@
 const puppeteer = require('puppeteer');
-const devices = require('puppeteer/DeviceDescriptors');
 const fs = require('fs');
+const rules = require('./rules.json');
 
 var browser;
-var MAX_CONNECTIONS = 10;
+var MAX_CONNECTIONS = 5;
 var CURRENT_CONNECTIONS = 0;
 
 async function init() {
     console.log('Setup browser...');
-    browser = browser || await puppeteer.launch({headless: true});
+    browser = browser || await puppeteer.launch({headless: false});
 }
 
 async function dispose() {
@@ -21,48 +21,36 @@ async function dispose() {
 
 async function fetchInfo(url) {
     const page = await browser.newPage();
-    await page.emulate(devices['iPhone 5']);
+    // Disable WebP for iOS
     await page.setExtraHTTPHeaders({Accept: 'text/html,application/xhtml+xml,application/xml;q=0.8'});
     await page.goto(url, {waitUntil: 'load', timeout: 0});
     let info;
-    if (/jd\.com/.test(url)) {
-        info = await getJDInfo(url, page);
-    } else if (/suning\.com/.test(url)) {
-        info = await getSuningInfo(url, page);
+    for (const rule of rules) {
+        const urlRegExp = new RegExp(rule.url);
+        if (urlRegExp.test(url)) {
+            const soldoutSelector = await page.$(rule.soldoutSelector);
+            const soldoutText = soldoutSelector ? await soldoutSelector.evaluate(node => node.innerText) : null;
+            soldoutSelector && await soldoutSelector.dispose();
+            const soldout = soldoutText && new RegExp(rule.soldoutKeyword).test(soldoutText);
+            const takeoffSelector = await page.$(rule.takeoffSelector);
+            const takeoffText = takeoffSelector ? await takeoffSelector.evaluate(node => node.innerText) : null;
+            takeoffSelector && await takeoffSelector.dispose();
+            const takeoff = takeoffText && new RegExp(rule.takeoffKeyword).test(takeoffText);
+            const imageSelector = await page.$(rule.imageSelector);
+            const imgSrc = imageSelector ? await imageSelector.evaluate(node => node.src) : null;
+            imageSelector && await imageSelector.dispose();
+            const priceSelector = await page.$(rule.priceSelector);
+            const price = priceSelector ? await priceSelector.evaluate(node => node.innerText) : null;
+            priceSelector && await priceSelector.dispose();
+            const itemNameSelector = await page.$(rule.itemNameSelector);
+            const itemName = itemNameSelector ? await itemNameSelector.evaluate(node => node.innerText) : null;
+            itemNameSelector && await itemNameSelector.dispose();
+            info = {url, imgSrc, soldout, takeoff, price, itemName};
+        }
     }
     await page.close();
     console.log('Fetched ' + url);
     return info;
-}
-
-async function getJDInfo(url, page) {
-    const statusNote = await page.$('#statusNote');
-    const status = statusNote ? await statusNote.evaluate(node => node.innerText) : null;
-    statusNote && await statusNote.dispose();
-    const soldout = status && /无货/.test(status);
-    const takeoff = status && /下架/.test(status);
-    const firstImage = await page.$('#firstImg');
-    const imgSrc = firstImage ? await firstImage.evaluate(node => node.src) : null;
-    const priceSale = await page.$('#priceSale');
-    const price = priceSale ? await priceSale.evaluate(node => node.innerText) : null;
-    const itemName = await page.$('#itemName');
-    const name = itemName ? await itemName.evaluate(node => node.innerText) : null;
-    return {url, imgSrc, soldout, takeoff, price, name};
-}
-
-async function getSuningInfo(url, page) {
-    const statusNote = await page.$('#noGoodsP');
-    const status = statusNote ? await statusNote.evaluate(node => node.innerText) : null;
-    statusNote && await statusNote.dispose();
-    const soldout = status && /无货/.test(status);
-    const takeoff = status && /下架/.test(status);
-    const firstImage = await page.$('.pic-item img');
-    const imgSrc = firstImage ? 'https:' + (await firstImage.evaluate(node => node.getAttribute('ori-src'))) : null;
-    const priceSale = await page.$('#nopgPriceSymbol');
-    const price = priceSale ? await priceSale.evaluate(node => node.innerText) : null;
-    const itemName = await page.$('#productName');
-    const name = itemName ? await itemName.evaluate(node => node.innerText) : null;
-    return {url, imgSrc, soldout, takeoff, price, name};
 }
 
 async function getUrls() {

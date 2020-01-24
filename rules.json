@@ -1,0 +1,22 @@
+[
+  {
+    "url": "jd\\.com",
+    "priceSelector": ".price",
+    "soldoutSelector": "#store-prompt",
+    "soldoutKeyword": "无货",
+    "takeoffSelector": ".itemover-tip",
+    "takeoffKeyword": "下柜",
+    "itemNameSelector": ".sku-name",
+    "imageSelector": "#spec-img"
+  },
+  {
+    "url": "suning\\.com",
+    "priceSelector": ".mainprice",
+    "soldoutSelector": "#c_kucun",
+    "soldoutKeyword": "无货",
+    "takeoffSelector": null,
+    "takeoffKeyword": null,
+    "itemNameSelector": "#itemDisplayName",
+    "imageSelector": "#bigImg img"
+  }
+]
