@@ -8,7 +8,7 @@ var CURRENT_CONNECTIONS = 0;
 
 async function init() {
     console.log('Setup browser...');
-    browser = browser || await puppeteer.launch({headless: false});
+    browser = browser || await puppeteer.launch({headless: true});
 }
 
 async function dispose() {
