@@ -1,6 +1,8 @@
 [
   {
     "url": "jd\\.com",
+    "badge": "https://corporate.jd.com/static/images/main-logo.jpg",
+    "badgeClassName": "jd",
     "priceSelector": ".price",
     "soldoutSelector": "#store-prompt",
     "soldoutKeyword": "无货",
@@ -11,6 +13,8 @@
   },
   {
     "url": "suning\\.com",
+    "badge": "https://image4.suning.cn/uimg/cms/img/155540698836163295.png",
+    "badgeClassName": "suning",
     "priceSelector": ".mainprice",
     "soldoutSelector": "#c_kucun",
     "soldoutKeyword": "无货",
@@ -18,5 +22,18 @@
     "takeoffKeyword": null,
     "itemNameSelector": "#itemDisplayName",
     "imageSelector": "#bigImg img"
+  },
+  {
+    "url": "tmall\\.com",
+    "badge": "https://img.alicdn.com/tfs/TB11ojWRXXXXXafaFXXXXXXXXXX-190-27.png",
+    "badgeClassName": "tmall",
+    "priceSelector": "#J_StrPriceModBox dd",
+    "soldoutSelector": ".ui-msg",
+    "soldoutKeyword": "缺货",
+    "takeoffSelector": null,
+    "takeoffKeyword": null,
+    "itemNameSelector": ".tb-detail-hd h1",
+    "imageSelector": "#J_ImgBooth",
+    "delay": 10
   }
 ]

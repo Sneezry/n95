@@ -6,9 +6,15 @@ var browser;
 var MAX_CONNECTIONS = 5;
 var CURRENT_CONNECTIONS = 0;
 
+async function sleep(t) {
+    return new Promise(resolve => {
+        setTimeout(resolve, t * 1000);
+    });
+}
+
 async function init() {
     console.log('Setup browser...');
-    browser = browser || await puppeteer.launch({headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox']});
+    browser = browser || await puppeteer.launch({headless: false, args: ['--no-sandbox', '--disable-setuid-sandbox']});
 }
 
 async function dispose() {
@@ -28,6 +34,9 @@ async function fetchInfo(url) {
     for (const rule of rules) {
         const urlRegExp = new RegExp(rule.url);
         if (urlRegExp.test(url)) {
+            if (rule.delay) {
+                await sleep(rule.delay);
+            }
             const soldoutSelector = await page.$(rule.soldoutSelector);
             const soldoutText = soldoutSelector ? await soldoutSelector.evaluate(node => node.innerText) : null;
             soldoutSelector && await soldoutSelector.dispose();

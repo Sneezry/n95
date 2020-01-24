@@ -85,6 +85,21 @@
         [data-available-only] a[data-takeoff] {
             display: none;
         }
+
+        .badge::after {
+            content: "";
+            display: block;
+            width: 120px;
+            height: 100%;
+            background-position: top;
+            background-repeat: no-repeat;
+            background-size: contain;
+            position: absolute;
+            right: 0;
+            top: 0;
+            z-index: 100;
+            opacity: 0.5;
+        }
     </style>
 </head>
 <body>
@@ -93,11 +108,29 @@ async function run() {
     const rq = new Request('data.json');
     const res = await fetch(rq);
     const data = await res.json();
-    document.body.innerHTML += `<div><h2>最后更新时间：${new Date(data.datetime).toLocaleString()}</h2><input type="checkbox" id="showAvailableOnly"><label for="showAvailableOnly">仅显示有货</label></div>`;
+    const rqRules = new Request('rules.json');
+    const resRules = await fetch(rqRules);
+    const dataRules = await resRules.json();
+
+    const badgeStyle = document.createElement('style');
+    document.head.appendChild(badgeStyle);
+
+    for (const rule of dataRules) {
+        if (rule.badge && rule.badgeClassName) {
+            badgeStyle.innerHTML += `.${rule.badgeClassName}::after {background-image: url(${rule.badge});}`;
+        }
+    }
+
+    document.body.innerHTML += `<div><h2>最后更新时间：${new Date(data.datetime).toLocaleString()}</h2><input type="checkbox" id="showAvailableOnly"><label for="showAvailableOnly">仅显示有货</label> <span style="color: #e1251b">（因技术限制，无法正确显示天猫库存状态。）</span></div>`;
     for (const result of data.results) {
         const a = document.createElement('a');
         a.href = result.url;
         a.target = '_blank';
+        const rule = dataRules.find(r => new RegExp(r.url).test(result.url));
+        a.className = 'badge ';
+        if (rule && rule.badgeClassName) {
+            a.className += rule.badgeClassName;
+        }
         if (result.soldout) {
             a.setAttribute('data-soldout', true);
         } else if (result.takeoff) {
