@@ -18,8 +18,8 @@
     "priceSelector": ".mainprice",
     "soldoutSelector": "#c_kucun",
     "soldoutKeyword": "无货",
-    "takeoffSelector": null,
-    "takeoffKeyword": null,
+    "takeoffSelector": "#xjdiv",
+    "takeoffKeyword": "下架",
     "itemNameSelector": "#itemDisplayName",
     "imageSelector": "#bigImg img"
   },
